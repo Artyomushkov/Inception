@@ -1,0 +1,62 @@
+version: '3.5'
+services:    
+    mysql:
+      build:
+        context: ./requirements/mariadb
+        args:
+          MYSQL_DB: ${MYSQL_DB}
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+          MYSQL_USER: ${MYSQL_USER}
+          MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      container_name: wordpressDb
+      volumes: 
+        - db:/var/lib/mysql
+      ports:
+        - "3306:3306"
+      restart: always
+      networks: 
+       - mynet
+
+    wordpress: 
+      build:
+        context: ./requirements/wordpress
+      container_name: mywordpress
+      depends_on:
+        - mysql 
+      volumes:      
+        - wp:/var/www/html
+      env_file: .env  
+      restart: always
+      networks:
+        - mynet
+    
+    nginx:
+      build: ./requirements/nginx
+      container_name: mynginx
+      ports:
+        - "443:443"
+      volumes:
+        - wp:/var/www/html
+      restart: always
+      networks: 
+        - mynet
+      
+networks:
+  mynet:
+    driver: bridge
+
+volumes:
+  db:
+    name: db
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/jhizdahr/data/db
+  wp:
+    name: wp
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/jhizdahr/data/wp
