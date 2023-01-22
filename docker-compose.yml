@@ -24,7 +24,7 @@ services:
       depends_on:
         - mysql 
       volumes:      
-        - wp:/var/www/html
+        - wp:/var/www/html/wordpress
       env_file: .env  
       restart: always
       networks:
@@ -36,10 +36,12 @@ services:
       ports:
         - "443:443"
       volumes:
-        - wp:/var/www/html
+        - wp:/var/www/html/wordpress
       restart: always
       networks: 
         - mynet
+      depends_on:
+        - wordpress
       
 networks:
   mynet:
