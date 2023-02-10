@@ -1,0 +1,17 @@
+FROM debian:buster
+
+ARG MYSQL_DB
+ARG MYSQL_ROOT_PASSWORD
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+
+#ENV MYSQL_DB=${MYSQL_DB}
+#ENV MYSQL_ROOT_PASSWORD = ${MYSQL_ROOT_PASSWORD}
+#ENV MYSQL_USER = ${MYSQL_USER}
+#ENV MYSQL_PASSWORD = ${MYSQL_PASSWORD}
+
+RUN apt update && apt install -y mariadb-server
+COPY ./tools/* ./
+RUN chmod 777 ./initDb.sh && ./initDb.sh
+EXPOSE 3306
+CMD mysqld_safe
